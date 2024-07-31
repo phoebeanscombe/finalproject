@@ -1,0 +1,28 @@
+/* Header style */
+nav .navbar-brand
+{
+    font-size: 40px;
+    color: white;
+    font-weight: bold;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+
+nav
+{
+    position: absolute;
+    width: 100%;
+    height: 100px;
+    background-image: url("bookshelf2.jfif");
+    background-size: contain;
+    background-repeat: repeat;
+    opacity: 0.8;
+    z-index: 1;
+  }
+
+
+.nav-link
+{
+    color: white;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}

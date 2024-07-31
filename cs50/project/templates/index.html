@@ -1,0 +1,106 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block main %}
+    <form action="/search" method="post">
+        <input autocomplete="on" autofocus name="q" placeholder="Search for a book title" type="search">
+        <button id="searchbutton">Search</button>
+        <button id="addbutton">Add to my library</button>
+    </form>
+
+    <select id="bookDropdown" class="dropdown-content">
+        <!-- Options will be added here by your JavaScript code -->
+        <option></option>
+    </select>
+
+    <script>
+        console.log("JavaScript is linked")
+        document.getElementById("searchbutton").addEventListener("click", function() {
+            event.preventDefault();
+            console.log("Button clicked");
+            // Call the Google Books API
+            let userInput = document.querySelector('input[name="q"]').value;
+            let key = 'AIzaSyDiagADM8CjcYGlkanu_G6JI5J41R9MOCQ';
+            let url = 'https://www.googleapis.com/books/v1/volumes?q=' + userInput;
+
+            console.log("Fetch request made");
+            console.log("URL is: " + url + key);
+            fetch(url + key)
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    console.log(data);
+                    console.log(data.items);
+                    let booksList = document.getElementById('bookDropdown');
+                    // Clear the dropdown
+                    booksList.length = 0;
+                    let author = 'No author';
+
+                    if (data.items) {
+                        data.items.forEach(function(book) {
+                            if (book.volumeInfo.authors) {
+                                author = book.volumeInfo.authors[0];
+                                console.log(book.volumeInfo.authors[0]);
+                            } else {
+                                console.log('book.volumeInfo.authors is undefined');
+                            }
+                            console.log(book.volumeInfo.title);
+
+                            let title = book.volumeInfo.title;
+                            let image = false;
+
+                            if ("imageLinks" in book.volumeInfo) {
+                                image = book.volumeInfo.imageLinks.thumbnail;
+                            }
+
+                            // Add books to array
+                            let option = document.createElement('option');
+                            option.text = title + ', ' + author;
+                            if (image) {
+                                option.setAttribute('data-image', image);
+                            }
+
+                            booksList.add(option);
+                        });
+                    } else {
+                        console.log('data.items is undefined');
+                    }
+                })
+                .catch(function(error) {
+                    console.error('Error:', error);
+                });
+        });
+        document.getElementById("addbutton").addEventListener("click", function() {
+            let dropdown = document.getElementById("bookDropdown");
+            let selectedOption = dropdown.options[dropdown.selectedIndex];
+            let bookDetails = selectedOption.text.split(', ');
+            let bookTitle = bookDetails[0];
+            let bookAuthor = bookDetails[1];
+            let bookImage = selectedOption.getAttribute('data-image');
+
+            fetch('http://127.0.0.1:5000/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                title: bookTitle,
+                author: bookAuthor,
+                image: bookImage
+            }),
+            })
+            .then(response => {
+                console.log(response);
+                response.json();
+            })
+            .then(data => console.log(data))
+            .catch((error) => console.error('Error:', error));
+        });
+
+    </script>
+
+{% endblock %}

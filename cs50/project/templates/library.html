@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    My Library
+{% endblock %}
+
+{% block main %}
+<h2>My Library</h2>
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th>Title</th>
+                <th>Author</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Loop through the database entries to display them in this table -->
+            {% for row in rows %}
+            <tr>
+                <td>{{ row.image }}</td>
+                <td>{{ row.title }}</td>
+                <td>{{ row.author }}</td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
